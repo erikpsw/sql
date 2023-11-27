@@ -1,0 +1,44 @@
+create table student(
+	snum char(4) primary key check(snum like 's[0-9][0-9][0-9]'),
+	sname varchar(20),
+	sex char(2) check(sex in ('男','女')),
+	dept varchar(30),
+	birthday date,
+	telephone char(13) check(isnumeric(left(telephone,3))=1 and isnumeric(right(telephone,8))=1),
+	--中间有-故为char(13)
+)
+
+create table course(
+	cnum char(4) primary key check(cnum like 'c[0-9][0-9][0-9]'),
+	cname varchar(30),
+	credits smallint check(credits between 0 and 8),
+	descr varchar(40),
+	dept varchar(30),
+	textbook varchar(40),
+)
+
+create table sections(
+	secnum char(5) primary key check(secnum like '[0-9][0-9][0-9][0-9][0-9]'),
+	cnum char(4) references course(cnum),
+	pnum char(4) check(pnum like 'p%')
+)
+
+create table sc(
+	snum char(4),
+	secnum char(5) references sections(secnum),
+	score int check(score >=0 and score <=100),
+	foreign key (snum) references student(snum)
+)
+
+insert into sections
+values(11601,'c116','p001'),
+(11602,'c116','p002'),
+(12001,'c120','p003'),
+(12002,'c120','p003'),
+(11601,'c126','p004'),
+(13001,'c130','p005'),
+(13002,'c130','p006'),
+(13201,'c132','p007'),
+(13501,'c135','p007')
+
+-- 余下数据已输入

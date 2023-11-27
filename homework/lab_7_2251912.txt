@@ -1,0 +1,139 @@
+1
+select snum,sname from student where snum in (select snum from sc where score<60)
+
+2
+SELECT
+sname,DATEDIFF(day,birthday,GETDATE())/365 as age FROM Student
+WHERE snum IN (SELECT snum FROM SC, Sections ss ,Course c 
+WHERE SC.secnum=ss.secnum AND ss.cnum=c.cnum AND c.dept='计算机系') 
+
+3
+SELECT
+sname,dept FROM Student
+WHERE snum IN (SELECT snum FROM SC, Sections ss ,Course c 
+WHERE SC.secnum=ss.secnum AND ss.cnum=c.cnum AND c.cname='数据库技术') 
+
+4
+select distinct
+sname,sc.snum
+from student
+s, sc , sections ss, course c
+where
+sc.secnum=ss.secnum and sc.snum=s.snum and
+c.cnum=ss.cnum
+Group by
+sc.snum , sname
+Having
+count( c.cnum )>=(select count(*) from course)
+
+5
+SELECT distinct
+sname,snum
+FROM Student s
+WHERE
+80<=ALL (SELECT score
+FROM SC
+WHERE
+sc.snum=s.snum)
+
+6
+select
+sname,sc.snum
+from student
+s, sc
+where
+sc.snum=s.snum
+Group by
+sc.snum , sname
+having 
+Min(score)>=80 and AVG(score)>=90
+
+7
+select
+sname,sc.snum,ss.secnum,sc.score 
+from student
+s, sc , sections ss, course c
+where
+sc.secnum=ss.secnum and sc.snum=s.snum and
+c.cnum=ss.cnum
+Group by
+sc.snum , sname,c.cname,sc.score,ss.secnum
+having 
+c.cname='大学英语'
+order by sc.score desc
+
+8
+select distinct
+cnum,count(cnum) as number
+from sc , sections ss
+where
+sc.secnum=ss.secnum
+Group by
+cnum
+
+9
+select sname,dept from student where snum in (
+(select snum from sc , sections ss , course c WHERE
+sc.secnum =ss.secnum and c.cnum =ss.cnum and cname='数据库技术')
+EXCEPT
+(select snum from sc , sections ss , course c WHERE
+sc.secnum=ss.secnum and c.cnum= ss.cnum and cname='高等数学'))
+
+10
+select cname,textbook
+from course c
+where textbook like '%高等教育出版社'
+
+
+11
+select
+ss.cnum,MAX(sc.score) as maximum,MIN(sc.score) as minimum,AVG(sc.score) as average
+from  sc , sections ss
+where
+sc.secnum=ss.secnum
+Group by
+ss.cnum
+
+12
+select distinct
+cnum,count(cnum) as 选课人数,sum(1-sc.score/60) as  不及格人数
+from sc , sections ss
+where
+sc.secnum=ss.secnum
+Group by
+cnum
+
+13
+select
+dept,sname,snum
+from student 
+where dept in ('土木工程','交通工程','城市规划')
+group by 
+dept,sname,snum
+
+14
+select sname,dept from student where snum in (
+(select snum from sc , sections ss , course c WHERE
+sc.secnum =ss.secnum and c.cnum =ss.cnum and cname='数据库技术')
+UNION
+(select snum from sc , sections ss , course c WHERE
+sc.secnum=ss.secnum and c.cnum= ss.cnum and cname='多媒体技术'))
+
+15
+select
+dept,sname,snum,birthday
+from student 
+where dept='计算机'and DATEDIFF(day,birthday,GETDATE())/365<=24
+
+16
+select
+dept,sname,snum,birthday
+from student 
+where dept='计算机'and DATEDIFF(day,birthday,GETDATE())/365>19
+
+17
+SELECT top 5 percent sname, sc.snum, AVG(score) AS average
+FROM student s
+INNER JOIN sc ON sc.snum = s.snum
+GROUP BY sc.snum, sname
+ORDER BY AVG(score) DESC
